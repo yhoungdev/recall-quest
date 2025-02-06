@@ -11,7 +11,7 @@ const style = {
 }
 
 const MainLayout: FC<MainLayoutProps> = ({children}: MainLayoutProps) => {
-    return <div className="h-[100vh] w-full xl:max-w-[500px] mx-auto " 
+    return <div className="h-[100vh] w-full xl:max-w-[500px] mx-auto px-4" 
       style={style}>
         {children}
     </div>

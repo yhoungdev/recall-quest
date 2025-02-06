@@ -1,46 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CountrySelector } from "@/components/misc/CountrySelector";
 import MainLayout from "@/layouts/mainLayout";
 import Link from "next/link";
 import { FaFacebookF } from "react-icons/fa";
 import { FaApple, FaGoogle } from "react-icons/fa6";
-import { useState } from "react";
 
 export default function SignUp() {
-  const [selectedCountry, setSelectedCountry] = useState("");
-
   return (
     <MainLayout>
-      <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
-        <div className="w-full max-w-md space-y-8">
-          <h1 className="text-2xl font-bold text-center text-white">
-            CREATE ACCOUNT
-          </h1>
+        <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 ">
+      <div className="w-full max-w-md space-y-8">
+        <h1 className="text-2xl font-bold text-center text-white">
+          CREATE ACCOUNT
+        </h1>
 
-          <form className="space-y-4">
-            <CountrySelector onSelect={setSelectedCountry} />
-            <Input
-              type="email"
-              placeholder="Email"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-            />
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-            />
+        <form className="space-y-4">
+         
+          <Input
+            type="email"
+            placeholder="Email"
+            className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+          />
+  
 
-            <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white">
-              Sign up
-            </Button>
-          </form>
-          
+          <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white">
+            Sign up
+          </Button>
+        </form>
+
         <div className="text-center text-white">
           <p>OR</p>
         </div>
