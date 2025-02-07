@@ -8,15 +8,45 @@ import { FaApple, FaGoogle } from "react-icons/fa6";
 import { useState } from "react";
 import { FormEvent } from "react";
 import { useRouter } from "next/router";
+import { supabase } from '@/lib/supabase';
 
 export default function SignUp() {
-  const router = useRouter()
+  const router = useRouter();
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    router.push('/setup');
+    
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            country: selectedCountry,
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data) {
+        router.push('/setup');
+      }
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
+
   return (
     <MainLayout>
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
@@ -25,22 +55,37 @@ export default function SignUp() {
             CREATE ACCOUNT
           </h1>
 
+          {error && (
+            <div className="bg-red-500/20 text-red-200 p-3 rounded-md text-center">
+              {error}
+            </div>
+          )}
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             <CountrySelector onSelect={setSelectedCountry} />
             <Input
               type="email"
               placeholder="Email"
               className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
             <Input
               type="password"
               placeholder="Password"
               className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <Input
               type="password"
               placeholder="Confirm Password"
               className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
             />
 
             <Button type="submit" className="w-full bg-teal-400 hover:bg-teal-500 text-white">

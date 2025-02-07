@@ -5,13 +5,33 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaFacebookF } from "react-icons/fa";
 import { FaApple, FaGoogle } from "react-icons/fa6";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import { supabase } from '@/lib/supabase';
+
 export default function SignUp() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    router.push('/setup');
+    setError("");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        router.push('/setup');
+      }
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -22,16 +42,28 @@ export default function SignUp() {
             LOGIN
           </h1>
 
+          {error && (
+            <div className="bg-red-500/20 text-red-200 p-3 rounded-md text-center">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               type="email"
               placeholder="Email"
               className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
             <Input
               type="password"
               placeholder="Password"
               className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
 
             <Button type="submit" className="w-full bg-teal-400 hover:bg-teal-500 text-white">
