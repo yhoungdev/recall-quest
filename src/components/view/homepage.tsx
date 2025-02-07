@@ -1,4 +1,5 @@
 import { Button } from "../ui/button"
+import Link from "next/link"
 
 export default function Homepage () {
     return <div className="flex items-center  flex-col h-full 
@@ -10,9 +11,11 @@ export default function Homepage () {
             Play as Guest
         </Button>
 
-        <Button className="w-full bg-transparent border-2">
+        <Link href='/auth/login' className="w-full">
+        <Button className="w-full " variant={'outline'}>
             Log in
         </Button>
+        </Link>
         </div>
 
         <p >Don’t have an account? <a className="font-bold" href="/auth/signup">Sign up</a> </p>

@@ -6,10 +6,17 @@ import Link from "next/link";
 import { FaFacebookF } from "react-icons/fa";
 import { FaApple, FaGoogle } from "react-icons/fa6";
 import { useState } from "react";
+import { FormEvent } from "react";
+import { useRouter } from "next/router";
 
 export default function SignUp() {
+  const router = useRouter()
   const [selectedCountry, setSelectedCountry] = useState("");
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    router.push('/game');
+  };
   return (
     <MainLayout>
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
@@ -18,7 +25,7 @@ export default function SignUp() {
             CREATE ACCOUNT
           </h1>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onChange={handleSubmit}>
             <CountrySelector onSelect={setSelectedCountry} />
             <Input
               type="email"
@@ -36,7 +43,7 @@ export default function SignUp() {
               className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
             />
 
-            <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white">
+            <Button type="submit" className="w-full bg-teal-400 hover:bg-teal-500 text-white">
               Sign up
             </Button>
           </form>

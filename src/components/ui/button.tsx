@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-default  text-primary-foreground shadow hover:bg-primary/90",
+          "bg-default  hover:bg-teal-500 text-primary-foreground shadow ",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
@@ -45,7 +45,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={` py-6 ${cn(buttonVariants({ variant, size, className }))}`}
+        className={`  py-6 ${cn(buttonVariants({ variant, size, className }))}`}
         ref={ref}
         {...props}
       />
