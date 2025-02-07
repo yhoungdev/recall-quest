@@ -11,7 +11,7 @@ export default function SignUp() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    router.push('/game');
+    router.push('/setup');
   };
 
   return (

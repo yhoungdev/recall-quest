@@ -15,7 +15,7 @@ export default function SignUp() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    router.push('/game');
+    router.push('/setup');
   };
   return (
     <MainLayout>
@@ -25,7 +25,7 @@ export default function SignUp() {
             CREATE ACCOUNT
           </h1>
 
-          <form className="space-y-4" onChange={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <CountrySelector onSelect={setSelectedCountry} />
             <Input
               type="email"

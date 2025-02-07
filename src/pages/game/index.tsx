@@ -7,8 +7,10 @@ import { IoWifi } from "react-icons/io5";
 import { TbLetterW } from "react-icons/tb";
 import { BsQuestionCircle } from "react-icons/bs";
 import Image from "next/image";
-
+import Avatar from "boring-avatars";
+import { DefaultCoinSvg, DiamondSvg } from "@/assets/svg/indexSvg";
 export default function GameMenu() {
+  console.log(Avatar)
   return (
     <MainLayout>
       <div className="flex flex-col min-h-screen p-4">
@@ -21,19 +23,18 @@ export default function GameMenu() {
           <div className="flex items-center gap-2">
             <div className="flex items-center">
               <span className="text-white mr-1">0</span>
-              <div className="w-6 h-6 bg-yellow-400 rounded-full" />
+              <div className="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center" >
+                  <DefaultCoinSvg/>
+                </div>
             </div>
             <div className="flex items-center">
               <span className="text-white mr-1">0</span>
-              <div className="w-6 h-6 bg-blue-400 rounded-full" />
+              <div className="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center" >
+                  <DiamondSvg/>
+                 </div>
             </div>
             <div className="w-10 h-10 rounded-full overflow-hidden">
-              <Image
-                src="/avatars/avatar1.png"
-                alt="Player Avatar"
-                width={40}
-                height={40}
-              />
+              <Avatar />
             </div>
           </div>
         </div>
