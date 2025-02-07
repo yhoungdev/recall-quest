@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import MainLayout from "@/layouts/mainLayout";
 import Avatar from "boring-avatars";
 import { useState } from "react";
-
+import Link from "next/link";
 const avatarVariants = [
   "marble",
   "beam",
@@ -70,9 +70,11 @@ export default function Setup() {
             </div>
           </div>
 
-          <Button className="w-full bg-teal-400 hover:bg-teal-500 text-white">
+          <Link href='/game' className="w-full ">
+          <Button className="w-full mt-4 bg-teal-400 hover:bg-teal-500 text-white">
             Next
           </Button>
+          </Link>
         </div>
       </div>
     </MainLayout>
