@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MainLayout from "@/layouts/mainLayout";
@@ -30,6 +31,7 @@ export default function Setup() {
               <Avatar
                 size={96}
                 name={playerName || "Player"}
+                //@ts-ignore
                 variant={avatarVariants[selectedVariant]}
                 colors={colors}
               />
@@ -62,6 +64,7 @@ export default function Setup() {
                   <Avatar
                     size={80}
                     name={playerName || "Player"}
+                    //@ts-ignore
                     variant={variant}
                     colors={colors}
                   />
