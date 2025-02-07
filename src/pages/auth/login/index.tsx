@@ -5,38 +5,52 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaFacebookF } from "react-icons/fa";
 import { FaApple, FaGoogle } from "react-icons/fa6";
-import { FormEvent, useState } from "react";
 import { supabase } from '@/lib/supabase';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useState } from "react";
+
+const loginSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+});
 
 export default function SignUp() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: loginSchema,
+    onSubmit: async (values) => {
+      setError("");
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        });
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+        if (error) throw error;
 
-      if (error) throw error;
-
-      if (data.user) {
-        router.push('/setup');
+        if (data.user) {
+          router.push('/setup');
+        }
+      } catch (error: any) {
+        setError(error.message);
       }
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
+    },
+  });
 
   return (
     <MainLayout>
-      <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 ">
+      <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
         <div className="w-full max-w-md space-y-8">
           <h1 className="text-2xl font-bold text-center text-white">
             LOGIN
@@ -48,29 +62,47 @@ export default function SignUp() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="email"
-              placeholder="Email"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <form onSubmit={formik.handleSubmit} className="space-y-4">
+            <div className="space-y-1">
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.email && formik.errors.email && (
+                <div className="text-red-400 text-sm">{formik.errors.email}</div>
+              )}
+            </div>
 
-            <Button type="submit" className="w-full bg-teal-400 hover:bg-teal-500 text-white">
-              Sign In
+            <div className="space-y-1">
+              <Input
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.password && formik.errors.password && (
+                <div className="text-red-400 text-sm">{formik.errors.password}</div>
+              )}
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-teal-400 hover:bg-teal-500 text-white"
+              disabled={formik.isSubmitting}
+            >
+              {formik.isSubmitting ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
+    
         <div className="text-center text-white">
           <p>OR</p>
         </div>

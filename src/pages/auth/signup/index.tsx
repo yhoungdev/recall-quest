@@ -5,47 +5,63 @@ import MainLayout from "@/layouts/mainLayout";
 import Link from "next/link";
 import { FaFacebookF } from "react-icons/fa";
 import { FaApple, FaGoogle } from "react-icons/fa6";
-import { useState } from "react";
-import { FormEvent } from "react";
 import { useRouter } from "next/router";
 import { supabase } from '@/lib/supabase';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useState } from "react";
+
+const signupSchema = Yup.object().shape({
+  country: Yup.string()
+    .required('Please select your country'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password')], 'Passwords must match')
+    .required('Please confirm your password'),
+});
 
 export default function SignUp() {
   const router = useRouter();
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            country: selectedCountry,
+  const formik = useFormik({
+    initialValues: {
+      country: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+    validationSchema: signupSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setError("");
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email: values.email,
+          password: values.password,
+          options: {
+            data: {
+              country: values.country,
+            }
           }
+        });
+
+        if (error) throw error;
+
+        if (data) {
+          router.push('/setup');
         }
-      });
-
-      if (error) throw error;
-
-      if (data) {
-        router.push('/setup');
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setSubmitting(false);
       }
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
+    },
+  });
 
   return (
     <MainLayout>
@@ -61,38 +77,69 @@ export default function SignUp() {
             </div>
           )}
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <CountrySelector onSelect={setSelectedCountry} />
-            <Input
-              type="email"
-              placeholder="Email"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
+          <form className="space-y-4" onSubmit={formik.handleSubmit}>
+            <div className="space-y-1">
+              <CountrySelector 
+                onSelect={(value) => formik.setFieldValue('country', value)} 
+              />
+              {formik.touched.country && formik.errors.country && (
+                <div className="text-red-400 text-sm">{formik.errors.country}</div>
+              )}
+            </div>
 
-            <Button type="submit" className="w-full bg-teal-400 hover:bg-teal-500 text-white">
-              Sign up
+            <div className="space-y-1">
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.email && formik.errors.email && (
+                <div className="text-red-400 text-sm">{formik.errors.email}</div>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Input
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.password && formik.errors.password && (
+                <div className="text-red-400 text-sm">{formik.errors.password}</div>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                className="w-full bg-white/20 text-white placeholder:text-white/70 border-none"
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                <div className="text-red-400 text-sm">{formik.errors.confirmPassword}</div>
+              )}
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full bg-teal-400 hover:bg-teal-500 text-white"
+              disabled={formik.isSubmitting}
+            >
+              {formik.isSubmitting ? 'Creating Account...' : 'Sign up'}
             </Button>
           </form>
-          
         <div className="text-center text-white">
           <p>OR</p>
         </div>
